@@ -1,12 +1,15 @@
  
 import './App.css'
+ 
+import Dashboard from './Page/Dashboard'
 
 function App() {
  
 
   return (
     <>
-    <h2 className='text-center text-3xl'>chat application</h2>
+   <Dashboard></Dashboard>
+   {/* <EchoChatApp></EchoChatApp> */}
     </>
   )
 }

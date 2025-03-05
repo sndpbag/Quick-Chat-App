@@ -24,7 +24,7 @@ git clone https://github.com/sndpbag/Quick-Chat-App.git
 
 ### 2️⃣ Navigate to the Project Directory:
 ```sh
-cd AlapKotha
+cd Quick-Chat-App
 ```
 
 ### 3️⃣ Install Dependencies:
