@@ -1,8 +1,23 @@
 
-import { Bold, GitCommitVertical, Italic, Link, Lock, Phone, Send, SquarePlus, Video } from 'lucide-react';
+import { Bold, GitCommitVertical, Italic, Link, Lock, Mic, Phone, Send, SquarePlus, Video } from 'lucide-react';
 import profile from '../../public/my image.jpg'
+import { useState } from 'react';
 
 const ChatArea = () => {
+
+    const [sendMessage,setSendMessage] = useState("")
+
+    const handelSendTextmessage = ()=>
+    {
+        
+        alert(sendMessage);
+        setSendMessage("")
+    }
+
+
+
+
+
     return (
         <div className="w-full h-full bg-white">
             {/* navbar */}
@@ -148,11 +163,11 @@ const ChatArea = () => {
                         </div>
                     </div>
                     <div className="chat-header">
-                        Obi-Wan Kenobi
+                       Obi-Wan Kenobi
                         <time className="text-xs opacity-50">12:45</time>
                     </div>
 
-                    <div className="chat-bubble">You were the Chosen One!</div>
+                    <div className="chat-bubble">{sendMessage}</div>
                     <div className="chat-footer opacity-50">Delivered</div>
                 </div>
 
@@ -168,12 +183,16 @@ const ChatArea = () => {
                         <SquarePlus size={24} />
                     </button>
                     <input
+                    value={sendMessage}
+                    onChange={(e)=>setSendMessage(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         type="text"
                         placeholder="Enter Message"
                     />
-                    <button className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                        <Send size={24} />
+                    <button onClick={handelSendTextmessage} className={`p-2 bg-green-500 focus:outline-none text-white rounded-lg hover:bg-green-600`} 
+                    disabled={sendMessage.length === 0}
+                    >
+                        <Send className='focus:outline-none' size={24} />
                     </button>
                 </div>
 
@@ -184,8 +203,9 @@ const ChatArea = () => {
                     <Bold size={16} className='text-slate-500'/>
                     <Italic size={16} className='text-slate-500' />
                     <Link  size={16} className='text-slate-500'/>
+                    <Mic  size={16} className='text-slate-500'/>
                     </div>
-                    <div className='flex items-center gap-1 text-sm text-sm'> <Lock size={14} /> End-to-end encrypted</div>
+                    <div className='flex items-center gap-1  text-sm'> <Lock size={14} /> End-to-end encrypted</div>
                 </div>
 
 
