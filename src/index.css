@@ -10,3 +10,8 @@
   }
 
    
+  .react-tabs__tab--selected {
+    border-bottom:2px solid var(--primary) !important;
+    font-weight:bolder !important;
+    color: var(--primary) !important;
+  }
