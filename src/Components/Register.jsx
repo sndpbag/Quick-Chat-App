@@ -1,330 +1,9 @@
-// import React, { useEffect, useRef } from 'react';
-
-// const Register = () => {
-//   const canvasRef = useRef(null);
-//   const mouseRef = useRef({ x: null, y: null, radius: 180 });
-//   const particlesRef = useRef([]);
-//   const animationFrameRef = useRef(null);
-
-//   useEffect(() => {
-//     const canvas = canvasRef.current;
-//     const ctx = canvas.getContext('2d');
-    
-//     // Set canvas size
-//     const resizeCanvas = () => {
-//       canvas.width = window.innerWidth;
-//       canvas.height = window.innerHeight;
-//     };
-    
-//     resizeCanvas();
-//     window.addEventListener('resize', resizeCanvas);
-    
-//     // Mouse tracking
-//     const handleMouseMove = (event) => {
-//       mouseRef.current.x = event.x;
-//       mouseRef.current.y = event.y;
-//     };
-    
-//     window.addEventListener('mousemove', handleMouseMove);
-    
-//     // Color palette for particles and connections
-//     const colors = [
-//       { r: 255, g: 99, b: 132 },   // Pink
-//       { r: 54, g: 162, b: 235 },   // Blue
-//       { r: 255, g: 206, b: 86 },   // Yellow
-//       { r: 75, g: 192, b: 192 },   // Teal
-//       { r: 153, g: 102, b: 255 },  // Purple
-//       { r: 255, g: 159, b: 64 }    // Orange
-//     ];
-    
-//     // Particle class
-//     class Particle {
-//       constructor(x, y) {
-//         this.x = x;
-//         this.y = y;
-//         this.size = Math.random() * 2 + 0.5;
-//         this.baseX = this.x;
-//         this.baseY = this.y;
-//         this.density = (Math.random() * 25) + 1;
-//         this.connections = [];
-//         this.color = colors[Math.floor(Math.random() * colors.length)];
-//         this.angle = Math.random() * Math.PI * 2;
-//         this.speed = 0.05 + Math.random() * 0.05;
-//       }
-      
-//       draw() {
-//         ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.7)`;
-//         ctx.beginPath();
-//         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-//         ctx.closePath();
-//         ctx.fill();
-//       }
-      
-//       update() {
-//         // Mouse interaction
-//         const mouse = mouseRef.current;
-//         let dx = mouse.x - this.x;
-//         let dy = mouse.y - this.y;
-//         let distance = Math.sqrt(dx * dx + dy * dy);
-        
-//         if (distance < mouse.radius) {
-//           let forceDirectionX = dx / distance;
-//           let forceDirectionY = dy / distance;
-//           let maxDistance = mouse.radius;
-//           let force = (maxDistance - distance) / maxDistance;
-//           let directionX = forceDirectionX * force * this.density;
-//           let directionY = forceDirectionY * force * this.density;
-          
-//           this.x -= directionX;
-//           this.y -= directionY;
-//         } else {
-//           // Return to original position with gentle movement
-//           if (this.x !== this.baseX) {
-//             let dx = this.x - this.baseX;
-//             this.x -= dx/20;
-//           }
-//           if (this.y !== this.baseY) {
-//             let dy = this.y - this.baseY;
-//             this.y -= dy/20;
-//           }
-//         }
-        
-//         // Add gentle floating motion
-//         this.angle += this.speed;
-//         this.baseX += Math.sin(this.angle) * 0.3;
-//         this.baseY += Math.cos(this.angle) * 0.3;
-//       }
-//     }
-    
-//     // Initialize particles
-//     const init = () => {
-//       particlesRef.current = [];
-//       const numberOfParticles = 200; // More particles for richer effect
-      
-//       for (let i = 0; i < numberOfParticles; i++) {
-//         let x = Math.random() * canvas.width;
-//         let y = Math.random() * canvas.height;
-//         particlesRef.current.push(new Particle(x, y));
-//       }
-      
-//       // Create connections between particles
-//       for (let a = 0; a < particlesRef.current.length; a++) {
-//         particlesRef.current[a].connections = [];
-//         for (let b = a + 1; b < particlesRef.current.length; b++) {
-//           let dx = particlesRef.current[a].x - particlesRef.current[b].x;
-//           let dy = particlesRef.current[a].y - particlesRef.current[b].y;
-//           let distance = Math.sqrt(dx * dx + dy * dy);
-          
-//           if (distance < 150 && Math.random() < 0.05) {
-//             particlesRef.current[a].connections.push(b);
-//           }
-//         }
-//       }
-//     };
-    
-//     // Connect particles with colorful lines
-//     const connect = () => {
-//       for (let i = 0; i < particlesRef.current.length; i++) {
-//         for (let j = 0; j < particlesRef.current[i].connections.length; j++) {
-//           let connectedParticleIndex = particlesRef.current[i].connections[j];
-//           let p1 = particlesRef.current[i];
-//           let p2 = particlesRef.current[connectedParticleIndex];
-          
-//           // Calculate distance for opacity
-//           let dx = p1.x - p2.x;
-//           let dy = p1.y - p2.y;
-//           let distance = Math.sqrt(dx * dx + dy * dy);
-          
-//           // Create gradient for the line
-//           const gradient = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
-//           gradient.addColorStop(0, `rgba(${p1.color.r}, ${p1.color.g}, ${p1.color.b}, 0.5)`);
-//           gradient.addColorStop(1, `rgba(${p2.color.r}, ${p2.color.g}, ${p2.color.b}, 0.5)`);
-          
-//           ctx.strokeStyle = gradient;
-//           ctx.lineWidth = 0.8;
-//           ctx.beginPath();
-//           ctx.moveTo(p1.x, p1.y);
-//           ctx.lineTo(p2.x, p2.y);
-//           ctx.stroke();
-//         }
-//       }
-//     };
-    
-//     // Animation loop
-//     const animate = () => {
-//       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-//       // Create a gradient background
-//       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-//       gradient.addColorStop(0, '#1a0f40');
-//       gradient.addColorStop(1, '#3d1e7b');
-//       ctx.fillStyle = gradient;
-//       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-//       for (let i = 0; i < particlesRef.current.length; i++) {
-//         particlesRef.current[i].update();
-//         particlesRef.current[i].draw();
-//       }
-//       connect();
-      
-//       animationFrameRef.current = requestAnimationFrame(animate);
-//     };
-    
-//     init();
-//     animate();
-    
-//     // Cleanup
-//     return () => {
-//       window.removeEventListener('resize', resizeCanvas);
-//       window.removeEventListener('mousemove', handleMouseMove);
-//       cancelAnimationFrame(animationFrameRef.current);
-//     };
-//   }, []);
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log('Registration submitted');
-//   };
-
-//   return (
-//     <div className="h-screen overflow-hidden relative">
-//       <canvas 
-//         ref={canvasRef} 
-//         className="absolute top-0 left-0 w-full h-full z-0"
-//       />
-      
-//       <div className="flex items-center justify-center h-screen">
-//         <div 
-//           className="p-10 rounded-xl shadow-2xl w-96 text-white z-10 relative"
-//           style={{ 
-//             backdropFilter: 'blur(8px)',
-//             backgroundColor: 'rgba(255, 255, 255, 0.1)',
-//             border: '1px solid rgba(255, 255, 255, 0.2)',
-//             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)'
-//           }}
-//         >
-//           <h2 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent" 
-//               style={{
-//                 backgroundImage: 'linear-gradient(45deg, #ff6b6b, #9777fa, #6bb5ff)',
-//                 textShadow: '0 0 10px rgba(255, 255, 255, 0.3)'
-//               }}>
-//             Create Account
-//           </h2>
-          
-//           <form className="space-y-5" onSubmit={handleSubmit}>
-//             <div>
-//               <label className="block text-sm font-medium mb-2" htmlFor="fullname">Full Name</label>
-//               <input 
-//                 type="text" 
-//                 id="fullname" 
-//                 placeholder="Enter your full name" 
-//                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-//                 style={{
-//                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//                   color: 'white',
-//                   border: '1px solid rgba(255, 255, 255, 0.2)'
-//                 }}
-//               />
-//             </div>
-            
-//             <div>
-//               <label className="block text-sm font-medium mb-2" htmlFor="email">Email Address</label>
-//               <input 
-//                 type="email" 
-//                 id="email" 
-//                 placeholder="Enter your email" 
-//                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-//                 style={{
-//                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//                   color: 'white',
-//                   border: '1px solid rgba(255, 255, 255, 0.2)'
-//                 }}
-//               />
-//             </div>
-            
-//             <div>
-//               <label className="block text-sm font-medium mb-2" htmlFor="username">Username</label>
-//               <input 
-//                 type="text" 
-//                 id="username" 
-//                 placeholder="Choose a username" 
-//                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-//                 style={{
-//                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//                   color: 'white',
-//                   border: '1px solid rgba(255, 255, 255, 0.2)'
-//                 }}
-//               />
-//             </div>
-            
-//             <div>
-//               <label className="block text-sm font-medium mb-2" htmlFor="password">Password</label>
-//               <input 
-//                 type="password" 
-//                 id="password" 
-//                 placeholder="Create a password" 
-//                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-//                 style={{
-//                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//                   color: 'white',
-//                   border: '1px solid rgba(255, 255, 255, 0.2)'
-//                 }}
-//               />
-//             </div>
-            
-//             <div>
-//               <label className="block text-sm font-medium mb-2" htmlFor="confirmPassword">Confirm Password</label>
-//               <input 
-//                 type="password" 
-//                 id="confirmPassword" 
-//                 placeholder="Confirm your password" 
-//                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-//                 style={{
-//                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//                   color: 'white',
-//                   border: '1px solid rgba(255, 255, 255, 0.2)'
-//                 }}
-//               />
-//             </div>
-            
-//             <div className="flex items-center">
-//               <input 
-//                 type="checkbox" 
-//                 id="terms" 
-//                 className="h-4 w-4 rounded"
-//               />
-//               <label htmlFor="terms" className="ml-2 text-sm">I agree to the <a href="#" className="text-purple-300 hover:underline">Terms & Conditions</a></label>
-//             </div>
-            
-//             <button 
-//               type="submit" 
-//               className="w-full py-3 px-4 rounded-lg font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-300"
-//               style={{
-//                 background: 'linear-gradient(45deg, #7928CA, #FF0080)',
-//                 boxShadow: '0 4px 15px rgba(255, 0, 128, 0.3)'
-//               }}
-//             >
-//               Register
-//             </button>
-//           </form>
-          
-//           <div className="mt-6 text-center text-sm">
-//             <p>Already have an account? <a href="#" className="text-purple-300 hover:underline">Sign In</a></p>
-//           </div>
-          
-//           <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-xl opacity-40"></div>
-//           <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-blue-500 to-teal-300 rounded-full blur-xl opacity-40"></div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Register;
 
 
 
+import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
@@ -680,10 +359,52 @@ const Register = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Registration submitted');
+  const { register, handleSubmit, watch,  formState: { errors, isSubmitted, submitCount }  } = useForm();
+  const { enqueueSnackbar } = useSnackbar(); // Snackbar function
+  
+
+
+  const onSubmit  = (data) => {
+   
+    
+    console.log(data);
+    console.log(errors.fullname)
   };
+
+
+    // Display error notifications for each field
+    useEffect(() => {
+      if (isSubmitted && Object.keys(errors).length > 0) {
+        if (errors.fullName) {
+          enqueueSnackbar('Full name is required', { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+        }
+      }
+    }, [errors,errors.fullName, isSubmitted, submitCount, enqueueSnackbar]);
+  
+    useEffect(() => {
+      if (isSubmitted && Object.keys(errors).length > 0) {
+        if (errors.email) {
+          enqueueSnackbar(errors.email.message || 'Valid email is required', { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+        }
+      }
+    }, [errors,errors.email, isSubmitted, submitCount, enqueueSnackbar]);
+  
+    useEffect(() => {
+      if (isSubmitted && Object.keys(errors).length > 0) {
+        if (errors.password) {
+          enqueueSnackbar(errors.password.message || 'Password is required', { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+        }
+      }
+    }, [errors,errors.password, isSubmitted, submitCount, enqueueSnackbar]);
+  
+    useEffect(() => {
+      if (isSubmitted && Object.keys(errors).length > 0) {
+        if (errors.terms) {
+          enqueueSnackbar('You must accept the terms and conditions', { variant: 'error', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+        }
+      }
+    }, [errors,errors.terms, isSubmitted, submitCount, enqueueSnackbar]);
+  
 
   return (
     <div className="h-screen overflow-hidden relative">
@@ -710,12 +431,13 @@ const Register = () => {
             Create Account
           </h2>
           
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="fullname">Full Name</label>
               <input 
                 type="text" 
                 id="fullname" 
+                {...register("fullName",{required:true})}
                 placeholder="Enter your full name" 
                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
                 style={{
@@ -724,13 +446,16 @@ const Register = () => {
                   border: '1px solid rgba(138, 43, 226, 0.3)'
                 }}
               />
+             
             </div>
             
+             
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="email">Email Address</label>
               <input 
                 type="email" 
                 id="email" 
+                {...register("email",{required:true})}
                 placeholder="Enter your email" 
                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
                 style={{
@@ -761,6 +486,16 @@ const Register = () => {
               <input 
                 type="password" 
                 id="password" 
+                {...register("password",{required:true,
+                  minLength: {
+                    value: 5,
+                    message: "Password must be at least 5 characters"
+                  },
+                  maxLength: {
+                    value: 7,
+                    message: "Password cannot exceed 7 characters"
+                  }
+                })}
                 placeholder="Create a password" 
                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
                 style={{
@@ -790,6 +525,7 @@ const Register = () => {
               <input 
                 type="checkbox" 
                 id="terms" 
+                {...register("terms",{required:true})}
                 className="h-4 w-4 rounded"
               />
               <label htmlFor="terms" className="ml-2 text-sm">I agree to the <a href="#" className="text-indigo-300 hover:underline">Terms & Conditions</a></label>
