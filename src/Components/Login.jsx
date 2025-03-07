@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const canvasRef = useRef(null);
@@ -187,7 +188,7 @@ const LoginPage = () => {
             border: '1px solid rgba(255, 255, 255, 0.15)'
           }}
         >
-          <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">Quick Chat Sndp</h2>
           
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -241,7 +242,7 @@ const LoginPage = () => {
           </form>
           
           <div className="mt-6 text-center text-sm">
-            <p>Don't have an account? <a href="#" className="text-blue-300 hover:underline">Register</a></p>
+            <p>Don't have an account? <Link to='/registration' className="text-blue-300 hover:underline">Register</Link></p>
           </div>
         </div>
       </div>
