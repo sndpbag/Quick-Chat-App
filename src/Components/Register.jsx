@@ -1,10 +1,11 @@
 
 
 
+import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const canvasRef = useRef(null);
@@ -362,13 +363,36 @@ const Register = () => {
   const { register, handleSubmit, watch,  formState: { errors, isSubmitted, submitCount }  } = useForm();
   const { enqueueSnackbar } = useSnackbar(); // Snackbar function
   
+    const navigate = useNavigate();
 
-
-  const onSubmit  = (data) => {
+  const onSubmit  = async(data) => {
    
     
-    console.log(data);
-    console.log(errors.fullname)
+    try {
+      
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/signup`, data);
+      console.log("Server response:", response.data);
+      if(response.data.message)
+      {
+        enqueueSnackbar(response.data.message, { variant:'success', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+     
+        navigate("/");
+      }
+      // Handle successful signup (e.g., redirect user, show success message)
+    } catch (error) {
+      let errorMessage = "Something went wrong! Please try again.";
+    
+      if (error.response) {
+        errorMessage = error.response.data?.message || JSON.stringify(error.response.data.error);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+  
+      enqueueSnackbar(errorMessage, { 
+        variant: 'error', 
+        anchorOrigin: { vertical: "top", horizontal: "right" } 
+      });
+    }
   };
 
 
