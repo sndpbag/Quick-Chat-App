@@ -1,5 +1,8 @@
+import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { io } from "socket.io-client";
 
 const LoginPage = () => {
   const canvasRef = useRef(null);
@@ -165,10 +168,48 @@ const LoginPage = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+
+
+
+// Socket.io connection
+const socket = io("http://localhost:5000");
+
+ 
+
+  const handleSubmit =async (e) => {
     e.preventDefault();
     // Add login logic here
-    console.log('Login submitted');
+    
+    try {
+      
+      const data = {
+        email: e.target.email.value,
+        password: e.target.password.value,
+        socketId: socket.id, // 👈 Socket ID পাঠানো হচ্ছে
+      };
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, data);
+      console.log("Server response:", response.data);
+      if(response.data.message)
+      {
+        enqueueSnackbar(response.data.message, { variant:'success', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+     
+        // navigate("/");
+      }
+      // Handle successful signup (e.g., redirect user, show success message)
+    } catch (error) {
+      let errorMessage = "Something went wrong! Please try again.";
+    
+      if (error.response) {
+        errorMessage = error.response.data?.message || JSON.stringify(error.response.data.error);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+  
+      enqueueSnackbar(errorMessage, { 
+        variant: 'error', 
+        anchorOrigin: { vertical: "top", horizontal: "right" } 
+      });
+    }
   };
 
   return (
@@ -194,9 +235,10 @@ const LoginPage = () => {
             <div>
               <label className="block text-sm font-medium mb-2" htmlFor="username">Username</label>
               <input 
-                type="text" 
-                id="username" 
-                placeholder="Enter your username" 
+                type="email" 
+                id="email" 
+                name='email'
+                placeholder="Enter your Email" 
                 className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.08)',
@@ -211,6 +253,7 @@ const LoginPage = () => {
               <input 
                 type="password" 
                 id="password" 
+                name='password'
                 placeholder="Enter your password" 
                 className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 style={{

@@ -1,17 +1,72 @@
 
 import { Bold, GitCommitVertical, Italic, Link, Lock, Mic, Phone, Send, SquarePlus, Video } from 'lucide-react';
 import profile from '../../public/my image.jpg'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { io } from "socket.io-client";
 
 const ChatArea = () => {
-
+    const socket = io(`${import.meta.env.VITE_API_URL}`); // Server URL
     const [sendMessage,setSendMessage] = useState("")
+    const [receiveMessages,setReceiveMessage] = useState([]);
+    const [userId,setUserId] = useState("67cb1543784d50b427ac1270");
+    const [recipientId,setrecipientId] = useState("67cadffdfa8e2564fae9a73a")
+
+    console.log(receiveMessages)
+
+    // useEffect(() => {
+    //     // Receive Message
+    //     socket.on("receiveMessage", (data) => {
+    //         setReceiveMessage((prevMessages) => [...prevMessages, data]);
+    //     });
+
+    //     return () => {
+    //         socket.off("receiveMessage");
+    //     };
+    // }, []);
+
+    useEffect(() => {
+        socket.emit("registerUser", userId); // Register User
+
+        socket.on("receivePrivateMessage", (newMessage) => {
+            console.log(newMessage)
+            if (
+                (newMessage.sender === userId && newMessage.receiver === recipientId) ||
+                (newMessage.sender === recipientId && newMessage.receiver === userId)
+            ) {
+                setReceiveMessage((prevMessages) => [...prevMessages, newMessage]);
+            }
+        });
+
+        return () => {
+            socket.off("receivePrivateMessage");
+        };
+    }, [userId, recipientId]);
+
+
+    //  for get current time
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+
 
     const handelSendTextmessage = ()=>
     {
         
-        alert(sendMessage);
-        setSendMessage("")
+        // if (sendMessage.trim() !== "") {
+        //     const messageData = { text: sendMessage, sender: "User" };
+        //     socket.emit("sendMessage", messageData);
+        //     setSendMessage(" "); // Clear input field
+        // }
+        if (sendMessage.trim() === "") return;
+
+        const newMessage = {
+            sender: userId,
+            receiver: recipientId,
+            text: sendMessage,
+        };
+
+        socket.emit("sendPrivateMessage", newMessage);
+        setReceiveMessage([...sendMessage, { ...newMessage, timestamp: new Date() }]);
+        setSendMessage(" ");
     }
 
 
@@ -63,23 +118,36 @@ const ChatArea = () => {
 
 
 
+{
+    
+   receiveMessages.map((rcvMsg ,index )=>{
+   
+   return( <div key={index} className="chat chat-end">
+    <div className="chat-image avatar">
+        <div className="w-10 rounded-full">
+            <img
+                alt="Tailwind CSS chat bubble component"
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+    </div>
+    <div className="chat-header">
+        {/* {rcvMsg.sender} */}
+        <time className="text-xs opacity-50">{currentTime}</time>
+    </div>
+    <div className="chat-bubble">{rcvMsg.text}</div>
+    <div className="chat-footer opacity-50">Seen at {currentTime}</div>
+</div>
+   );
+
+   }) 
+}
 
 
-                <div className="chat chat-end">
-                    <div className="chat-image avatar">
-                        <div className="w-10 rounded-full">
-                            <img
-                                alt="Tailwind CSS chat bubble component"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                        </div>
-                    </div>
-                    <div className="chat-header">
-                        Anakin
-                        <time className="text-xs opacity-50">12:46</time>
-                    </div>
-                    <div className="chat-bubble">I hate you!</div>
-                    <div className="chat-footer opacity-50">Seen at 12:46</div>
-                </div>
+              
+
+
+
+
 
 
                 <div className="chat chat-start">
@@ -101,21 +169,7 @@ const ChatArea = () => {
 
 
 
-                <div className="chat chat-end">
-                    <div className="chat-image avatar">
-                        <div className="w-10 rounded-full">
-                            <img
-                                alt="Tailwind CSS chat bubble component"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                        </div>
-                    </div>
-                    <div className="chat-header">
-                        Anakin
-                        <time className="text-xs opacity-50">12:46</time>
-                    </div>
-                    <div className="chat-bubble">I hate you!</div>
-                    <div className="chat-footer opacity-50">Seen at 12:46</div>
-                </div>
+               
 
 
                 <div className="chat chat-start">
@@ -137,21 +191,7 @@ const ChatArea = () => {
 
 
 
-                <div className="chat chat-end">
-                    <div className="chat-image avatar">
-                        <div className="w-10 rounded-full">
-                            <img
-                                alt="Tailwind CSS chat bubble component"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                        </div>
-                    </div>
-                    <div className="chat-header">
-                        Anakin
-                        <time className="text-xs opacity-50">12:46</time>
-                    </div>
-                    <div className="chat-bubble">I hate you!</div>
-                    <div className="chat-footer opacity-50">Seen at 12:46</div>
-                </div>
+                
 
 
                 <div className="chat chat-start">
