@@ -173,7 +173,7 @@ const LoginPage = () => {
 
 
 // Socket.io connection
-const socket = io("http://localhost:5000");
+const socket = io("https://quick-chat-app-server-ajv0.onrender.com");
 
  const navigate = useNavigate();
  const { setUser} = useContext(AuthContext);
