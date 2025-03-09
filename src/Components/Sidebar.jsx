@@ -310,6 +310,8 @@ const Sidebar = ({ onSelectRecipient }) => {
         return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     };
 
+    console.log(filteredUsers)
+
     return (
         <div className='w-[530px] h-full border-[1px] border-slate-200'>
             <div className='w-full h-20 border-b-[1px] border-slate-200 px-3 flex justify-between items-center'>
@@ -434,6 +436,7 @@ const Sidebar = ({ onSelectRecipient }) => {
                             </div>
                         ) : (
                             filteredUsers.map((contact) => (
+                       
                                 <div 
                                     key={contact._id}
                                     className={`single_chat ${selectedUserId === contact._id ? 'bg-violet-300' : 'bg-violet-100'} cursor-pointer hover:bg-violet-300 py-4 flex justify-between items-center px-2`}
