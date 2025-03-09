@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
-import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { io } from "socket.io-client";
+import { AuthContext } from '../Provider/AuthProvider';
 
 const LoginPage = () => {
   const canvasRef = useRef(null);
@@ -174,7 +175,8 @@ const LoginPage = () => {
 // Socket.io connection
 const socket = io("http://localhost:5000");
 
- 
+ const navigate = useNavigate();
+ const { setUser} = useContext(AuthContext);
 
   const handleSubmit =async (e) => {
     e.preventDefault();
@@ -189,11 +191,12 @@ const socket = io("http://localhost:5000");
       };
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, data);
       console.log("Server response:", response.data);
-      if(response.data.message)
+      setUser(response.data);
+      if(response.data)
       {
-        enqueueSnackbar(response.data.message, { variant:'success', anchorOrigin: { vertical: "top", horizontal: "right" }, });
+        enqueueSnackbar(response.data.fullName, { variant:'success', anchorOrigin: { vertical: "top", horizontal: "right" }, });
      
-        // navigate("/");
+        navigate("/dashboard");
       }
       // Handle successful signup (e.g., redirect user, show success message)
     } catch (error) {
